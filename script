@@ -1,0 +1,37 @@
+#!/bin/bash
+#assign 'google-chrome' to browser variable if it is for chrome browser
+browser='microsoft-edge'
+filename='websites.txt'
+delayTime=10
+#repeat loop
+totalruns=9999
+
+
+######################
+loopnumber=0
+while [ $loopnumber -lt $totalruns ]
+do
+
+#read contents of filename and launch browser/tabs
+browseropened=0
+while read line
+do
+     $browser http://$line > /dev/null 2>&1 &
+    if [ $browseropened -eq 0 ] 
+    then
+        #get pid of first browser[
+        pid=$!   
+	browseropened=1   
+    fi 
+   
+    #browser needs time to open window to properly,minimal is 2
+     sleep $delayTime
+
+done < $filename
+
+#close the first browser pid
+kill -9 $pid
+
+loopnumber=$((loopnumber+1))
+sleep 1
+done
